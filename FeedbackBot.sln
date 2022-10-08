@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5E537F6A-2F8D-4B4D-975F-CDA10BAFD0F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{BA6F68FB-9124-4B66-BB84-B05195790512}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{5EE5CDDB-A0C0-49E7-B32F-0A0BD88B10A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{AAEECFCC-F7B8-4127-A302-DB2CF6F535BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A8CD39E4-DFEE-45B8-8959-DFACBDC9FE1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedbackBot.Domain", "src\Core\FeedbackBot.Domain\FeedbackBot.Domain.csproj", "{43BF4B6A-5726-4BB7-A242-46B6151CB12E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedbackBot.Persistence", "src\Infrastructure\FeedbackBot.Persistence\FeedbackBot.Persistence.csproj", "{3FC38B48-C9FB-4817-9EA4-7B291D572D1C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedbackBot.Application", "src\Core\FeedbackBot.Application\FeedbackBot.Application.csproj", "{84E8B62E-C51E-4612-9F8F-217978C32B25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedbackBot.Host", "src\Presentation\FeedbackBot.Host\FeedbackBot.Host.csproj", "{8F9C675B-0518-48BB-93CE-ECA81F89D556}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43BF4B6A-5726-4BB7-A242-46B6151CB12E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43BF4B6A-5726-4BB7-A242-46B6151CB12E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43BF4B6A-5726-4BB7-A242-46B6151CB12E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43BF4B6A-5726-4BB7-A242-46B6151CB12E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FC38B48-C9FB-4817-9EA4-7B291D572D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FC38B48-C9FB-4817-9EA4-7B291D572D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FC38B48-C9FB-4817-9EA4-7B291D572D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FC38B48-C9FB-4817-9EA4-7B291D572D1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84E8B62E-C51E-4612-9F8F-217978C32B25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E8B62E-C51E-4612-9F8F-217978C32B25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E8B62E-C51E-4612-9F8F-217978C32B25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E8B62E-C51E-4612-9F8F-217978C32B25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9C675B-0518-48BB-93CE-ECA81F89D556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9C675B-0518-48BB-93CE-ECA81F89D556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9C675B-0518-48BB-93CE-ECA81F89D556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9C675B-0518-48BB-93CE-ECA81F89D556}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BA6F68FB-9124-4B66-BB84-B05195790512} = {5E537F6A-2F8D-4B4D-975F-CDA10BAFD0F3}
+		{5EE5CDDB-A0C0-49E7-B32F-0A0BD88B10A1} = {5E537F6A-2F8D-4B4D-975F-CDA10BAFD0F3}
+		{AAEECFCC-F7B8-4127-A302-DB2CF6F535BE} = {5E537F6A-2F8D-4B4D-975F-CDA10BAFD0F3}
+		{A8CD39E4-DFEE-45B8-8959-DFACBDC9FE1E} = {5E537F6A-2F8D-4B4D-975F-CDA10BAFD0F3}
+		{43BF4B6A-5726-4BB7-A242-46B6151CB12E} = {BA6F68FB-9124-4B66-BB84-B05195790512}
+		{3FC38B48-C9FB-4817-9EA4-7B291D572D1C} = {5EE5CDDB-A0C0-49E7-B32F-0A0BD88B10A1}
+		{84E8B62E-C51E-4612-9F8F-217978C32B25} = {BA6F68FB-9124-4B66-BB84-B05195790512}
+		{8F9C675B-0518-48BB-93CE-ECA81F89D556} = {AAEECFCC-F7B8-4127-A302-DB2CF6F535BE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00959EB0-FEA7-4AFC-97AF-2B25CEA4AA1D}
+	EndGlobalSection
+EndGlobal
