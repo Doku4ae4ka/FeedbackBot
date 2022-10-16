@@ -7,6 +7,7 @@ using FeedbackBot.Application.Models.Resources;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Reflection;
+using FeedbackBot.Application.Behaviors;
 using FeedbackBot.Application.Models.Contexts;
 
 namespace FeedbackBot.Application.Extensions;
@@ -14,11 +15,14 @@ namespace FeedbackBot.Application.Extensions;
 public static class ServiceCollectionExtensions
 {
     private const string CommandResourcesPathTemplate = "Resources/Commands/{0}.json";
+    private const string BehaviorResourcesPathTemplate = "Resources/Behaviors/{0}.json";
     public static IServiceCollection AddApplication(this IServiceCollection services) => services
             .AddMemoryCache()
             .AddMapsterConfiguration()
+            .AddBehaviorsAndResources()
             .AddCommandsAndResources()
             .AddScoped<IUpdateHandler, UpdateHandler>()
+            .AddSingleton<IInteractionService, InteractionService>()
             .AddSingleton<ICommandsService, CommandsService>()
             .AddScoped<IResourcesService, ResourcesService>()
             .AddScoped<BehaviorContext>()
@@ -39,6 +43,47 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    private static IServiceCollection AddBehaviorsAndResources(this IServiceCollection services)
+    {
+        // Register behaviors manually to preserve their order
+        var implementations = new[]
+        {
+            typeof(ErrorBehavior),
+            typeof(SlashCommandBehavior),
+            typeof(MisunderstandingBehavior)
+        };
+
+        foreach (var implementation in implementations)
+            services.AddScoped(typeof(IBehavior), implementation);
+
+        var behaviorTypes = GetImplementationsOf<IBehavior>();
+        foreach (var behaviorType in behaviorTypes)
+        {
+            if (!behaviorType.IsAbstract && services.All(x => x.ImplementationType != behaviorType))
+                Log.Warning("Behavior of type {0} is not registered", behaviorType.FullName);
+        }
+
+        return services.AddBehaviorResources(implementations.Select(x => x.FullName!));
+    }
+    
+    private static IServiceCollection AddBehaviorResources(
+        this IServiceCollection services, IEnumerable<string> behaviorTypeNames)
+    {
+        var resourceMap = behaviorTypeNames.ToDictionary(
+            behaviorTypeName => behaviorTypeName, behaviorTypeName =>
+            {
+                var path = string.Format(
+                    BehaviorResourcesPathTemplate, behaviorTypeName.Split('.').Last());
+
+                var data = ParseJObjectFromRelativeLocation(path);
+                return data is not null
+                    ? new BehaviorResources(data)
+                    : null;
+            });
+
+        return services.AddSingleton<IDictionary<string, BehaviorResources?>>(resourceMap);
+    }
+    
     private static IServiceCollection AddCommandsAndResources(this IServiceCollection services)
     {
         var commandTypes = GetImplementationsOf<ICommand>().ToArray();

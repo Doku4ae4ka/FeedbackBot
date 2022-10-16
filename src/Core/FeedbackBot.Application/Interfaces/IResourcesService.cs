@@ -6,4 +6,5 @@ public interface IResourcesService
 {
     public CommandResources? GetCommandResources<TCommand>() where TCommand : ICommand;
     public CommandResources? GetCommandResources(string commandTypeName);
+    public BehaviorResources? GetBehaviorResources(string behaviorTypeName);
 }

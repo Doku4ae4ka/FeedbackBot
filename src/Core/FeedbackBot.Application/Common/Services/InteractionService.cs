@@ -6,18 +6,10 @@ namespace FeedbackBot.Application.Common.Services;
 
 public class InteractionService : IInteractionService
 {
-    private const string MentionCheckpointName = "__Mention__";
     private readonly IMemoryCache _cache;
 
     public InteractionService(IMemoryCache cache) =>
         _cache = cache;
-
-    public MentionCheckpoint IssueMentionCheckpoint(long userId)
-    {
-        var checkpoint = new MentionCheckpoint(MentionCheckpointName, TimeSpan.FromSeconds(15));
-        SetUserCheckpoint(userId, checkpoint);
-        return checkpoint;
-    }
 
     public CommandCheckpoint IssueCheckpoint(string name, string handlerTypeName, long userId)
     {

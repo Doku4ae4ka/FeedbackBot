@@ -17,12 +17,6 @@ public class BehaviorContext : MessageContext
         IInteractionService interaction)
         : base(bot, interaction) { }
 
-    public Checkpoint SetMentionCheckpoint()
-    {
-        Checkpoint = Interaction.IssueMentionCheckpoint(Message.Sender.Id);
-        return Checkpoint;
-    }
-
     public override async Task<int> ReplyAsync(
         string text,
         bool? disableWebPagePreview = null,

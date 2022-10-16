@@ -10,6 +10,6 @@ public class EmailRequest
     public string Profile { get; set; } = null!;
     public string RequestSubject { get; set; } = null!;
     public string RequestContent { get; set; } = null!;
-    public string EmailAdress { get; set; } = null!;
+    public string Email { get; set; } = null!;
     public DateTime Created { get; set; }
 }

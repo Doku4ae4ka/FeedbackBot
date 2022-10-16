@@ -1,4 +1,5 @@
 ﻿using FeedbackBot.Application.Interfaces;
+using FeedbackBot.Application.Models.Checkpoints;
 using FeedbackBot.Application.Models.Contexts;
 using FeedbackBot.Application.Models.DTOs;
 using Mapster;
@@ -11,26 +12,22 @@ namespace FeedbackBot.Application.Common.Services;
 
 public class UpdateHandler : IUpdateHandler
 {
+    private readonly IEnumerable<IBehavior> _behaviors;
     private readonly IResourcesService _resources;
-    private readonly ICommandsService _commands;
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly CommandContext _commandContext;
+    private readonly IInteractionService _interaction;
     private readonly BehaviorContext _behaviorContext;
 
     public UpdateHandler(
-        ICommandsService commands,
+        IEnumerable<IBehavior> behaviors,
         IResourcesService resources,
-        IServiceScopeFactory scopeFactory,
-        CommandContext commandContext,
+        IInteractionService interaction,
         BehaviorContext behaviorContext)
     {
-        _commands = commands;
+        _behaviors = behaviors;
         _resources = resources;
-        _scopeFactory = scopeFactory;
-        _commandContext = commandContext;
+        _interaction = interaction;
         _behaviorContext = behaviorContext;
-}
-
+    }
 
     public async Task HandleAsync(Update update, CancellationToken cancellationToken)
     {
@@ -46,51 +43,43 @@ public class UpdateHandler : IUpdateHandler
 #endif
 
         FillBehaviorContext(_behaviorContext, update.Message);
-        FillCommandContext(_commandContext, _behaviorContext);
 
-        if (_commandContext.CommandTypeName != null)
+        var enumerator = _behaviors.GetEnumerator();
+        await RunNextBehaviorAsync(_behaviorContext);
+
+        async Task RunNextBehaviorAsync(BehaviorContext context)
         {
-            using var scope = _scopeFactory.CreateScope();
-            var command = _commands.GetCommandInstance(scope, _commandContext.CommandTypeName);
-            await command.ExecuteAsync(_commandContext, new CancellationTokenSource().Token);
-        }
-        else
-        {
-            var response = "Я вас не понял";
-            await _behaviorContext.ReplyAsync(response);
+            var previousBehaviorTypeName = context.BehaviorTypeName;
+            var previousResources = context.Resources;
+
+            if (enumerator.MoveNext())
+            {
+                context.BehaviorTypeName = enumerator.Current.GetType().FullName!;
+                context.Resources =
+                    _resources.GetBehaviorResources(context.BehaviorTypeName);
+
+                Log.Debug("Entering behavior {0}", context.BehaviorTypeName);
+
+                try
+                {
+                    await enumerator.Current.HandleAsync(context, RunNextBehaviorAsync);
+                }
+                finally
+                {
+                    Log.Debug("Leaving behavior {0}", context.BehaviorTypeName);
+
+                    context.BehaviorTypeName = previousBehaviorTypeName;
+                    context.Resources = previousResources;
+                }
+            }
         }
     }
+
     private void FillBehaviorContext(BehaviorContext context, Message message)
     {
         context.Message = message.Adapt<MessageDto>();
         context.Message.IsReplyToMe = context.Message.ReplyTarget?.Sender.Id == context.Bot.BotId;
         context.Message.IsPrivate = message.Chat.Type == ChatType.Private;
-    }
-
-    private bool FillCommandContext(CommandContext commandContext, BehaviorContext behaviorContext)
-    {
-        if (string.IsNullOrWhiteSpace(behaviorContext.Message.Text))
-            return false;
-
-        var slash = behaviorContext.Message.Text.Split().First().ToLower();
-        if (!slash.StartsWith('/'))
-        {
-            Log.Information("First word is not a slash");
-            return true;
-        }
-
-        slash = slash[1..].ToString().ToLower();
-
-        var commandTypeName = _commands.GetCommandTypeNameBySlash(slash);
-        if (commandTypeName is null)
-        {
-            Log.Information("No command with the given slash found in message");
-            return false;
-        }
-
-        commandContext.CommandTypeName = commandTypeName;
-        commandContext.Resources = _resources.GetCommandResources(commandContext.CommandTypeName);
-        commandContext.Message = behaviorContext.Message;
-        return true;
+        context.Checkpoint = _interaction.TryGetCurrentCheckpoint(context.Message.Sender.Id);
     }
 }
