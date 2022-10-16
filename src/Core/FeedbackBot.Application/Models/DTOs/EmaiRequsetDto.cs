@@ -1,5 +1,4 @@
-﻿
-namespace FeedbackBot.Domain.Models.Entities;
+﻿namespace FeedbackBot.Application.Models.DTOs;
 
 public class EmailRequest
 {
@@ -13,3 +12,4 @@ public class EmailRequest
     public string EmailAdress { get; set; } = null!;
     public DateTime Created { get; set; }
 }
+

@@ -50,41 +50,47 @@ public class UpdateHandler : IUpdateHandler
 
         if (_commandContext.CommandTypeName != null)
         {
-            if (update.Message.Text == _commandContext.CommandTypeName)
-            {
-                using var scope = _scopeFactory.CreateScope();
-                var command = _commands.GetCommandInstance(scope, _commandContext.CommandTypeName);
-                await command.ExecuteAsync(_commandContext, new CancellationTokenSource().Token);
-            }
-            else
-            {
-                var response = "У нас возникло небольшое недопонимание";
-                await _commandContext.ReplyAsync(response);
-            }
+            using var scope = _scopeFactory.CreateScope();
+            var command = _commands.GetCommandInstance(scope, _commandContext.CommandTypeName);
+            await command.ExecuteAsync(_commandContext, new CancellationTokenSource().Token);
+        }
+        else
+        {
+            var response = "Я вас не понял";
+            await _behaviorContext.ReplyAsync(response);
         }
     }
     private void FillBehaviorContext(BehaviorContext context, Message message)
     {
         context.Message = message.Adapt<MessageDto>();
-        context.Message.IsReplyToMe = context.Message.ReplyTarget?.Sender.UserId == context.Bot.BotId;
+        context.Message.IsReplyToMe = context.Message.ReplyTarget?.Sender.Id == context.Bot.BotId;
         context.Message.IsPrivate = message.Chat.Type == ChatType.Private;
     }
 
-    private void FillCommandContext(CommandContext commandContext, BehaviorContext behaviorContext)
+    private bool FillCommandContext(CommandContext commandContext, BehaviorContext behaviorContext)
     {
-        var slash = commandContext.Message.Text.Split().First().ToLower();
+        if (string.IsNullOrWhiteSpace(behaviorContext.Message.Text))
+            return false;
+
+        var slash = behaviorContext.Message.Text.Split().First().ToLower();
         if (!slash.StartsWith('/'))
         {
             Log.Information("First word is not a slash");
+            return true;
         }
+
+        slash = slash[1..].ToString().ToLower();
 
         var commandTypeName = _commands.GetCommandTypeNameBySlash(slash);
         if (commandTypeName is null)
         {
             Log.Information("No command with the given slash found in message");
+            return false;
         }
 
         commandContext.CommandTypeName = commandTypeName;
         commandContext.Resources = _resources.GetCommandResources(commandContext.CommandTypeName);
+        commandContext.Message = behaviorContext.Message;
+        return true;
     }
 }

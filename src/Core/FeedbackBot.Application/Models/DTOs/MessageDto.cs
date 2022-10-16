@@ -2,8 +2,7 @@
 
 public class MessageDto
 {
-    public Guid Id { get; set; }
-    public long MessageId { get; set; }
+    public long Id { get; set; }
     public string Text { get; set; } = null!;
     public UserDto Sender { get; set; } = null!;
     public ChatDto Chat { get; set; } = null!;

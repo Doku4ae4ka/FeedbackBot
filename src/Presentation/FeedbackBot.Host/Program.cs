@@ -23,7 +23,8 @@ builder.Services.AddHttpClient("tgwebhook")
 builder.Services
     .AddApplication()
     .AddPersistence(builder.Configuration)
-    .AddControllers();
+    .AddControllers()
+    .AddNewtonsoftJson();
 
 var app = builder.Build();
 
