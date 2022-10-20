@@ -8,16 +8,23 @@ public class MisunderstandingBehavior : IBehavior
 {
     public async Task HandleAsync(BehaviorContext context, BehaviorContextHandler next)
     {
-        if (context.Message.IsReplyToMe)
+        if (context.Update.Message!.IsReplyToMe)
         {
             await next(context);
             return;
         }
-
-        if (context.Message.IsPrivate ||
-            context.Message.IsReplyToMe)
+        
+        var checkpoint =  context.GetCheckpoint();
+        var isBotMentioned = checkpoint is { Name: "BotMentioned" };
+        
+        if (context.Update.Message.IsPrivate ||
+            context.Update.Message.IsReplyToMe ||
+            isBotMentioned)
         {
-            await context.ReplyAsync(context.Resources!.Get("CannotUnderstandYou"));
+            if (isBotMentioned)
+                context.ResetCheckpoint();
+            
+            await context.SendTextAsync(context.Resources!.Get("CannotUnderstandYou"));
             return;
         }
 

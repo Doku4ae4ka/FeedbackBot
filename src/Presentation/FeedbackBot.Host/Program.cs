@@ -21,7 +21,7 @@ builder.Services.AddHttpClient("tgwebhook")
     .AddTypedClient<ITelegramBotClient>(client => new TelegramBotClient(token, client));
 
 builder.Services
-    .AddApplication()
+    .AddApplication(builder.Configuration)
     .AddPersistence(builder.Configuration)
     .AddControllers()
     .AddNewtonsoftJson();

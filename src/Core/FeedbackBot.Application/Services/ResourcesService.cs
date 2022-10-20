@@ -1,7 +1,7 @@
 ﻿using FeedbackBot.Application.Interfaces;
 using FeedbackBot.Application.Models.Resources;
 
-namespace FeedbackBot.Application.Common.Services;
+namespace FeedbackBot.Application.Services;
 
 public class ResourcesService : IResourcesService
 {

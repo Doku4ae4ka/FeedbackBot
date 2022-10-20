@@ -17,12 +17,14 @@ public class CreateRequestCommand : ICommand
 
     public async Task ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
-        if (context.Checkpoint is CommandCheckpoint)
+        var checkpoint = context.GetCheckpoint();
+        
+        if (checkpoint?.HandlerTypeName.EndsWith("Command") ?? false)
             context.ResetCheckpoint();
-        else if (context.Checkpoint==null)
+        else if (checkpoint?.Name == null)
         {
-            await context.ReplyAsync(context.Resources!.Get("DescribeRequest"));
-            context.SetCommandCheckpoint("DescribeRequest");
+            await context.SendTextAsync(context.Resources!.Get("DescribeRequest"));
+            context.SetCheckpoint("DescribeRequest");
             return;
         }
         var data = context.Message.Text.Split('\n');
@@ -34,9 +36,10 @@ public class CreateRequestCommand : ICommand
         request.RequestSubject = data[4];
         request.RequestContent = data[5];
         request.Email = "Email";
+        
         await _dbContext.EmailRequests.AddAsync(request.Adapt<EmailRequest>(),cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await context.ReplyAsync(context.Resources!.Get("RequestSent"));
+        await context.SendTextAsync(context.Resources!.Get("RequestSent"));
     }
 }

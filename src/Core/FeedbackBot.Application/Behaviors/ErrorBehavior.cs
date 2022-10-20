@@ -16,7 +16,7 @@ public class ErrorBehavior : IBehavior
         catch (Exception e)
         {
             Log.Error(e, "Behavior pipeline has thrown an exception");
-            await context.ReplyAsync(context.Resources!.Get<string>("SomethingWentWrong"));
+            await context.SendTextAsync(context.Resources!.Get<string>("SomethingWentWrong"));
         }
     }
 }

@@ -1,4 +1,3 @@
-using FeedbackBot.Application.Behaviors.Base;
 using FeedbackBot.Application.Interfaces;
 using FeedbackBot.Application.Models.Contexts;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,16 +8,20 @@ namespace FeedbackBot.Application.Behaviors;
 
 public class SlashCommandBehavior : CommandBehaviorBase
 {
+    private readonly ITelegramBotClient _bot;
     private readonly ICommandsService _commands;
     private readonly IResourcesService _resources;
 
     public SlashCommandBehavior(
+        ITelegramBotClient bot,
         ICommandsService commands,
         IResourcesService resources,
         IServiceScopeFactory scopeFactory,
-        CommandContext commandContext)
-        : base(commands, resources, scopeFactory, commandContext)
+        CommandContext commandContext,
+        ICheckpointMemoryService checkpoints)
+        : base(commands, resources, scopeFactory, commandContext, checkpoints)
     {
+        _bot = bot;
         _commands = commands;
         _resources = resources;
     }
@@ -35,12 +38,12 @@ public class SlashCommandBehavior : CommandBehaviorBase
             return true;
         }
 
-        slash = slash[1..].ToString().ToLower();
+        slash = slash[1..].ToLower();
         
         if (slash.Contains('@'))
         {
-            var bot = commandContext.Bot.GetMeAsync().Result;
-            var postfix = $"@{bot.Username.ToLower()}";
+            var bot = _bot.GetMeAsync().Result;
+            var postfix = $"@{bot.Username!.ToLower()}";
             
             if (slash.EndsWith(postfix))
                 slash = slash[..^postfix.Length].ToString();
@@ -55,9 +58,9 @@ public class SlashCommandBehavior : CommandBehaviorBase
             return false;
         }
 
-        commandContext.CommandTypeName = commandTypeName;
-        commandContext.Resources = _resources.GetCommandResources(commandContext.CommandTypeName);
-        //commandContext.Payload = commandContext.Message.Text[slash.Length..].TrimStart();
+        commandContext.HandlerTypeName = commandTypeName;
+        commandContext.Resources = _resources.GetCommandResources(commandContext.HandlerTypeName);
+        commandContext.Payload = commandContext.Message.Text[slash.Length..].TrimStart();
         return true;
     }
 }
