@@ -60,9 +60,6 @@ public abstract class CommandBehaviorBase : IBehavior
                 return;
             }
         }
-        
-        if (checkpoint is { Name: "BotMentioned" })
-            context.ResetCheckpoint();
 
         using var scope = _scopeFactory.CreateScope();
         var command = _commands.GetCommandInstance(scope, _commandContext.HandlerTypeName);

@@ -1,4 +1,4 @@
-﻿using FeedbackBot.Application.Interfaces;
+using FeedbackBot.Application.Interfaces;
 using FeedbackBot.Application.Models.Checkpoints;
 using FeedbackBot.Application.Models.Contexts;
 using FeedbackBot.Application.Models.DTOs;
@@ -8,11 +8,11 @@ using Mapster;
 
 namespace FeedbackBot.Application.Commands;
 
-public class CreateRequestCommand : ICommand
+public class TestCommand : ICommand
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public CreateRequestCommand(ApplicationDbContext dbContext) =>
+    public TestCommand(ApplicationDbContext dbContext) =>
         _dbContext = dbContext;
 
     public async Task ExecuteAsync(CommandContext context, CancellationToken cancellationToken)

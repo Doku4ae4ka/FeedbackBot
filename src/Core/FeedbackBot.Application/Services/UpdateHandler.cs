@@ -1,9 +1,7 @@
 ﻿using FeedbackBot.Application.Interfaces;
-using FeedbackBot.Application.Models.Checkpoints;
 using FeedbackBot.Application.Models.Contexts;
 using FeedbackBot.Application.Models.DTOs;
 using Mapster;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -78,7 +76,7 @@ public class UpdateHandler : IUpdateHandler
 
         if (update.Message is not null)
         {
-            context.Update.Message.IsReplyToMe = context.Update.Message.ReplyTarget?.Sender.Id == _bot.BotId;
+            context.Update.Message!.IsReplyToMe = context.Update.Message.ReplyTarget?.Sender.Id == _bot.BotId;
             context.Update.Message.IsPrivate = update.Message!.Chat.Type == ChatType.Private;
         }
 

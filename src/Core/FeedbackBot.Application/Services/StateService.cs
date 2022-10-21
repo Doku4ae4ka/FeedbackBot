@@ -3,7 +3,7 @@ using FeedbackBot.Domain.Models.Entities;
 using FeedbackBot.Persistence;
 using Newtonsoft.Json;
 
-namespace Radzinsky.Application.Services;
+namespace FeedbackBot.Application.Services;
 
 public class StateService : IStateService
 {

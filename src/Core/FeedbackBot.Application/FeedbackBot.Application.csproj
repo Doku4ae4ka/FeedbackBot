@@ -30,7 +30,7 @@
     <None Update="Resources\Commands\StartCommand.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Commands\CreateRequestCommand.json">
+    <None Update="Resources\Commands\RegisterProjectCommand.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Behaviors\MisunderstandingBehavior.json">
@@ -40,6 +40,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ReplyMarkups\ChooseSchool.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Commands\TestCommand.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

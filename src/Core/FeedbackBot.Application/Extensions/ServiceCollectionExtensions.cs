@@ -10,7 +10,6 @@ using System.Reflection;
 using FeedbackBot.Application.Behaviors;
 using FeedbackBot.Application.Models.Contexts;
 using Microsoft.Extensions.Configuration;
-using Radzinsky.Application.Services;
 
 namespace FeedbackBot.Application.Extensions;
 
