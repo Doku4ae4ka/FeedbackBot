@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net;
+using System.Net.Mail;
+using Microsoft.Extensions.DependencyInjection;
 using FeedbackBot.Application.Interfaces;
 using FeedbackBot.Application.Services;
 using FeedbackBot.Application.Models.DTOs;
@@ -8,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Reflection;
 using FeedbackBot.Application.Behaviors;
+using FeedbackBot.Application.Models.Configs;
 using FeedbackBot.Application.Models.Contexts;
 using Microsoft.Extensions.Configuration;
 
@@ -28,6 +31,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IUpdateHandler, UpdateHandler>()
             .AddScoped<IResourcesService, ResourcesService>()
             .AddTransient<IRuntimeInfoService, RuntimeInfoService>()
+            .AddTransient<IEmailService,EmailService>()
             .AddSingleton<ICheckpointMemoryService, CheckpointMemoryService>()
             .AddSingleton<ICommandsService, CommandsService>()
             .AddSingleton<IHashingService, Md5HashingService>()
@@ -35,7 +39,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IStateService, StateService>()
             .AddScoped<BehaviorContext>()
             .AddScoped<CommandContext>()
-            .AddScoped<CallbackQueryContext>();
+            .AddScoped<CallbackQueryContext>()
+            .Configure<EmailConfig>(configuration.GetSection("Email"));
 
     private static IServiceCollection AddMapsterConfiguration(this IServiceCollection services, IConfiguration configuration)
     {

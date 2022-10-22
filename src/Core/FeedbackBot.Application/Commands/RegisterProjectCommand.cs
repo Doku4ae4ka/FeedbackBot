@@ -20,16 +20,19 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
     private readonly IStateService _states; 
     private readonly IHashingService _hasher;
     private readonly IResourcesService _resources;
+    private readonly IEmailService _emailService;
     private readonly ApplicationDbContext _dbContext;
     
     public RegisterProjectCommand(IStateService states,
         IHashingService hasher,
         IResourcesService resources,
+        IEmailService emailService,
         ApplicationDbContext dbContext)
     {
         _states = states;
         _hasher = hasher;
         _resources = resources;
+        _emailService = emailService;
         _dbContext = dbContext;
     }
     public async Task HandleCallbackQueryAsync(CallbackQueryContext context, CancellationToken token)
@@ -86,9 +89,9 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
 
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new() { factory.CreateCallbackDataButton("Школа на Большом Казенном", "Email1") },
-            new() { factory.CreateCallbackDataButton("Школа на Большом Трехсвятительском", "Email2") },
-            new() { factory.CreateCallbackDataButton("Школа на Ляле", "Email3") }
+            new() { factory.CreateCallbackDataButton("Школа на Большом Казенном", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Большом Трехсвятительском", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Ляле", "pkvartalbot@gmail.com") }
         };
 
         await context.SendTextAsync(context.Resources!.Get("ChooseSchool"),
@@ -119,23 +122,27 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         var state = await _states.ReadStateAsync<RegisterProjectState>(stateKey);
         var checkpoint = context.GetCheckpoint();
         
-        var request = new EmailRequestDto();
+        var request = new ProjectDto();
         var data = state.ProjectData.Split("\n");
         request.FullName = data[0];
-        request.Partners = data[1];
+        request.Members = data[1];
         request.Grade = data[2];
-        request.Profile = data[3];
-        request.RequestSubject = data[4];
-        request.RequestContent = data[5];
-        request.Email = state.Email;
+        request.Subject = data[3];
+        request.Content = data[4];
+        request.SchoolEmail = state.Email;
+        request.UserId = context.Update.InteractorUserId!.Value;
+        request.Created = DateTime.Now;
+        var project = request.Adapt<Project>();
         
-        await _dbContext.EmailRequests.AddAsync(request.Adapt<EmailRequest>());
-
+        await _dbContext.Projects.AddAsync(project);
         await _dbContext.SaveChangesAsync();
-        
-        await context.EditTextAsync(context.Query.Message.Id,_resources.GetCommandResources("FeedbackBot.Application.Commands.RegisterProjectCommand")!.Get("ProjectSent"));
 
+        await context.EditTextAsync(context.Query.Message.Id,_resources.GetCommandResources("FeedbackBot.Application.Commands.RegisterProjectCommand")!.Get("ProjectSent"));
+        
         await _states.ResetStateAsync(stateKey);
+        
+        await _emailService.SendEmailAsync(project);
+        await _emailService.ReceiveEmailAsync(project);
     }
 
     private static void ParseCallbackData(

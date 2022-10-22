@@ -9,6 +9,6 @@ namespace FeedbackBot.Domain.Models.Entities;
 public class EmailResponse
 {
     public Guid Id { get; set; }
-    public string ResponseSubject { get; set; } = null!;
-    public string ResponseContent { get; set; } = null!;
+    public long UserId { get; set; }
+    public string Body { get; set; } = null!;
 }
