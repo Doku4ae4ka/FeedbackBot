@@ -5,6 +5,6 @@ namespace FeedbackBot.Application.Interfaces;
 public interface IEmailService
 {
     public Task SendEmailAsync(Project context);
-    public Task ReceiveEmailAsync(Project context);
+    //public Task StartReceivingEmailsAsync();
 
 }

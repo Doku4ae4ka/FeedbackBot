@@ -5,7 +5,8 @@ using Telegram.Bot.Types;
 
 namespace FeedbackBot.Host.Controllers;
 
-[ApiController, Route("bot")]
+[ApiController]
+[Route("bot")]
 public class WebhookController : ControllerBase
 {
     [HttpPost("{token}")]

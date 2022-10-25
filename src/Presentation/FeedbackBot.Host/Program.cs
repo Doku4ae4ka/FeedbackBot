@@ -1,6 +1,10 @@
+using System.Formats.Asn1;
 using FeedbackBot.Host.Services;
 using FeedbackBot.Persistence;
 using FeedbackBot.Application.Extensions;
+using FeedbackBot.Application.Interfaces;
+using FeedbackBot.Application.Services;
+using FeedbackBot.Host;
 using FeedbackBot.Persistence.Extensions;
 using Serilog;
 using Telegram.Bot;
@@ -25,6 +29,7 @@ builder.Services
     .AddPersistence(builder.Configuration)
     .AddControllers()
     .AddNewtonsoftJson();
+builder.Services.AddHostedService<EmailReceiverService>();
 
 var app = builder.Build();
 
@@ -32,6 +37,8 @@ using(var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     DbInitializer.Initialize(context);
+    // var _emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+    // _emailService.StartReceivingEmailsAsync();
 }
 
 app.MapControllers();

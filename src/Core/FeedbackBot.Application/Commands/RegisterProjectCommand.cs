@@ -72,7 +72,7 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         
         if (await _states.ReadStateAsync<RegisterProjectState>(stateKey) is not null)
         {
-            await context.SendTextAsync("в данный момент вы уже регестрируете проект");
+            await context.SendTextAsync("В данный момент вы уже регестрируете проект");
             return;
         }
 
@@ -142,7 +142,6 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         await _states.ResetStateAsync(stateKey);
         
         await _emailService.SendEmailAsync(project);
-        await _emailService.ReceiveEmailAsync(project);
     }
 
     private static void ParseCallbackData(
