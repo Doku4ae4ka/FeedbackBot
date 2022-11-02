@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Globalization;
+using FeedbackBot.Application.Extensions;
 
 namespace FeedbackBot.Application.Models.Resources;
 
@@ -9,6 +10,12 @@ public abstract class ResourcesBase
 
     public ResourcesBase(JObject data) =>
         _data = data;
+
+    public string GetRandom(string key, params object[] args) =>
+        string.Format(CultureInfo.InvariantCulture, GetRandom<string>(key), args);
+    
+    public T GetRandom<T>(string key) =>
+        GetMany<T>(key).PickRandom();
     
     public IEnumerable<string> GetMany(string key, params object[] args) =>
         GetMany<string>(key)

@@ -29,7 +29,7 @@ builder.Services
     .AddPersistence(builder.Configuration)
     .AddControllers()
     .AddNewtonsoftJson();
-builder.Services.AddHostedService<EmailReceiverService>();
+//builder.Services.AddHostedService<EmailReceiverService>();
 
 var app = builder.Build();
 

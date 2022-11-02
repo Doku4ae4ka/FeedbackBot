@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Mail;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using FeedbackBot.Application.Interfaces;
 using FeedbackBot.Application.Services;
 using FeedbackBot.Application.Models.DTOs;
@@ -18,6 +16,7 @@ namespace FeedbackBot.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    private const string CommonResourcesPath = "Resources/common.json";
     private const string CommandResourcesPathTemplate = "Resources/Commands/{0}.json";
     private const string BehaviorResourcesPathTemplate = "Resources/Behaviors/{0}.json";
 
@@ -27,6 +26,8 @@ public static class ServiceCollectionExtensions
             .AddMapsterConfiguration(configuration)
             .AddBehaviorsAndResources()
             .AddCommandsAndResources()
+            .AddCommonResources()
+            .AddLinguisticParsing()
             .AddCallbackQueryHandlers()
             .AddScoped<IUpdateHandler, UpdateHandler>()
             .AddScoped<IResourcesService, ResourcesService>()
@@ -94,6 +95,8 @@ public static class ServiceCollectionExtensions
             typeof(ErrorBehavior),
             typeof(CallbackQueryBehavior),
             typeof(SlashCommandBehavior),
+            typeof(LinguisticCommandBehavior),
+            typeof(MentionBehavior),
             typeof(MisunderstandingBehavior)
         };
 
@@ -176,7 +179,20 @@ public static class ServiceCollectionExtensions
 
         return services.AddSingleton<IDictionary<string, BehaviorResources?>>(resourceMap);
     }
+    
+    private static IServiceCollection AddCommonResources(this IServiceCollection services)
+    {
+        var data = ParseJObjectFromRelativeLocation(CommonResourcesPath);
+        return data is not null
+            ? services.AddSingleton(new CommonResources(data))
+            : services;
+    }
 
+    private static IServiceCollection AddLinguisticParsing(this IServiceCollection services) => services
+        .AddSingleton<IStringDistanceMeasurer, DamerauLevenshteinSimilarityMeasurer>()
+        .AddSingleton<IStringSimilarityMeasurer, StringSimilarityMeasurer>()
+        .AddSingleton<ILinguisticParser, LinguisticParser>();
+    
     private static JObject? ParseJObjectFromRelativeLocation(string relativePath)
     {
         var absolutePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);

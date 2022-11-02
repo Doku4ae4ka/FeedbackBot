@@ -17,6 +17,18 @@ public class CommandsService : ICommandsService
         return (ICommand)scope.ServiceProvider.GetRequiredService(commandType);
     }
     
+    public string? GetCommandTypeNameByAlias(string alias)
+    {
+        var commandAliasMap = _commandResources.Select(x => new
+        {
+            CommandTypeName = x.Key,
+            Aliases = x.Value.Aliases
+        }).ToArray();
+            
+        var commandAlias = commandAliasMap.FirstOrDefault(x => x.Aliases.Contains(alias));
+        return commandAlias?.CommandTypeName;
+    }
+    
     public string? GetCommandTypeNameBySlash(string slash)
     {
         var commandSlashMap = _commandResources.Select(x => new

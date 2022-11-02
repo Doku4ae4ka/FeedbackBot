@@ -182,6 +182,7 @@ public class EmailService : IEmailService
         message.AppendLine($"Предложил инициативу: {context.FullName} {context.Grade}");
         message.AppendLine($"Участники: {context.Members}");
         message.AppendLine($"{context.Content}");
+        message.AppendLine($"Обращаться на почту: {context.StudentEmail}");
         return message.ToString();
     }
 }

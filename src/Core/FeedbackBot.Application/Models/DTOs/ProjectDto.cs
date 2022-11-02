@@ -9,6 +9,7 @@ public class ProjectDto
     public string Grade { get; set; } = null!;
     public string Subject { get; set; } = null!;
     public string Content { get; set; } = null!;
+    public string StudentEmail { get; set; } = null!;
     public string SchoolEmail { get; set; } = null!;
     public DateTime Created { get; set; }
 }

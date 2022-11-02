@@ -76,6 +76,14 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
             return;
         }
 
+        var data = context.Message.Text.Split("\n");
+        if (data.Length < 6 || (!data[3].ToLower().EndsWith("@gmail.com") && !data[3].ToLower().EndsWith("@yandex.ru") && !data[3].ToLower().EndsWith("@pkvartal.school")))
+        {
+            await context.SendTextAsync(context.Resources!.GetRandom<string>("IncompleteData"));
+            context.SetCheckpoint("IncompleteData");
+            return;
+        }
+
         var state = new RegisterProjectState(context.Update.InteractorUserId!.Value);
         await _states.WriteStateAsync(stateKey, state with { ProjectData = context.Message.Text });
         
@@ -127,8 +135,9 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         request.FullName = data[0];
         request.Members = data[1];
         request.Grade = data[2];
-        request.Subject = data[3];
-        request.Content = data[4];
+        request.StudentEmail = data[3];
+        request.Subject = data[4];
+        request.Content = string.Join(' ', data[5..]);
         request.SchoolEmail = state.Email;
         request.UserId = context.Update.InteractorUserId!.Value;
         request.Created = DateTime.Now;

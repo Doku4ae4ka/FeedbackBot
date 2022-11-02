@@ -11,7 +11,7 @@ using MessageSummaryItems = MailKit.MessageSummaryItems;
 
 namespace FeedbackBot.Host.Services;
 
-public class EmailReceiverService : IHostedService
+public class EmailReceiverService : BackgroundService
 {
 	//private readonly ILogger<WebhookConfigurator> _logger;
 	private readonly IServiceProvider _services;
@@ -26,8 +26,8 @@ public class EmailReceiverService : IHostedService
 		_services = serviceProvider;
 		_configuration = configuration;
 	}
-	
-    public async Task StartAsync(CancellationToken cancellationToken)
+
+	protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
 	    
 	    var logger = new ProtocolLogger(Console.OpenStandardError());
@@ -136,10 +136,5 @@ public class EmailReceiverService : IHostedService
 	    }*/
 
 	    //client.Disconnect(true);
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
     }
 }
