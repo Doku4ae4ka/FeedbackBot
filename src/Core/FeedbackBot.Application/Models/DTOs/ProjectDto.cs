@@ -3,7 +3,9 @@
 public class ProjectDto
 {
     public Guid Id { get; set; }
+    public DateTime Created { get; set; }
     public long UserId { get; set; }
+    public string IsResponsible { get; set; } = null;
     public string FullName { get; set; } = null!;
     public string Members { get; set; } = null!;
     public string Grade { get; set; } = null!;
@@ -11,6 +13,5 @@ public class ProjectDto
     public string Content { get; set; } = null!;
     public string StudentEmail { get; set; } = null!;
     public string SchoolEmail { get; set; } = null!;
-    public DateTime Created { get; set; }
 }
 

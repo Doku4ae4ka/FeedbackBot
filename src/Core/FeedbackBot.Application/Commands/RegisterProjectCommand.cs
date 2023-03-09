@@ -77,7 +77,7 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         }
 
         var data = context.Message.Text.Split("\n");
-        if (data.Length < 6 || (!data[3].ToLower().EndsWith("@gmail.com") && !data[3].ToLower().EndsWith("@yandex.ru") && !data[3].ToLower().EndsWith("@pkvartal.school")))
+        if (data.Length < 7 || (!data[4].ToLower().EndsWith("@gmail.com") && !data[4].ToLower().EndsWith("@yandex.ru") && !data[4].ToLower().EndsWith("@pkvartal.school")))
         {
             await context.SendTextAsync(context.Resources!.GetRandom<string>("IncompleteData"));
             context.SetCheckpoint("IncompleteData");
@@ -97,9 +97,15 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
 
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new() { factory.CreateCallbackDataButton("Школа на Большом Казенном", "pkvartalbot@gmail.com") },
-            new() { factory.CreateCallbackDataButton("Школа на Большом Трехсвятительском", "pkvartalbot@gmail.com") },
-            new() { factory.CreateCallbackDataButton("Школа на Ляле", "pkvartalbot@gmail.com") }
+            new() { factory.CreateCallbackDataButton("Школа на Покровке", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Шоссе энтузиастов", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Текстильщиках", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Коломенской", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Земляном валу", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Лялином переулоке", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Большом Казенном переулке", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Здание на ОВЗ", "pkvartalbot@gmail.com") },
+            new() { factory.CreateCallbackDataButton("Школа на Большом трехсвятительском переулке", "pkvartalbot@gmail.com") }
         };
 
         await context.SendTextAsync(context.Resources!.Get("ChooseSchool"),
@@ -132,12 +138,13 @@ public class RegisterProjectCommand : ICommand, ICallbackQueryHandler
         
         var request = new ProjectDto();
         var data = state.ProjectData.Split("\n");
-        request.FullName = data[0];
-        request.Members = data[1];
-        request.Grade = data[2];
-        request.StudentEmail = data[3];
-        request.Subject = data[4];
-        request.Content = string.Join(' ', data[5..]);
+        request.IsResponsible = data[0];
+        request.FullName = data[1];
+        request.Members = data[2];
+        request.Grade = data[3];
+        request.StudentEmail = data[4].ToLower();
+        request.Subject = data[5];
+        request.Content = string.Join(", ", data[6..]);
         request.SchoolEmail = state.Email;
         request.UserId = context.Update.InteractorUserId!.Value;
         request.Created = DateTime.Now;
