@@ -30,12 +30,12 @@ public class UpdateHandler : IUpdateHandler
 
     public async Task HandleAsync(Update update, CancellationToken cancellationToken)
     {
-#if DEBUG
-        Log.Debug("Received update: {@0}", update);
-#else
-        Log.Information("Received message ({0}) from chat {1}: {2}",
-            update.Message.MessageId, update.Message.Chat.Id, update.Message.Text);
-#endif
+// #if DEBUG
+//         Log.Debug("Received update: {@0}", update);
+// #else
+//         Log.Information("Received message ({0}) from chat {1}: {2}",
+//             update.Message.MessageId, update.Message.Chat.Id, update.Message.Text);
+// #endif
 
         FillBehaviorContext(_behaviorContext, update);
 
